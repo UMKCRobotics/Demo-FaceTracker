@@ -15,15 +15,16 @@ class TrackingInterface(object):
 
 
 	def __init__(self, conf):
-		self.movement = ArduinoInterface(conf["ard_port"],conf["ard_baud"])
+		self.movement = ArduinoInterface(conf["ard_port"],conf["ard_baud"],conf["MAX_TRIES"])
 		self.faceTracker = FaceTracker(conf["CAMERA_INDEX"])
 		self.previous_command = None
+		self.no_movement = self.faceTracker.getNoMovementCommand()
 
 	def trackFace(self):
-		new_command = faceTracker.getFaceCommand()
-		if new_command not in (None,self.previous_command):
+		new_command = self.faceTracker.getFaceCommand()
+		if new_command is not None and not (new_command == self.no_movement and self.previous_command == self.no_movement):
 			self.previous_command = new_command
-			return self.movement.doCommand("m",[new_command])
+			return self.movement.doCommand("m",new_command)
 		else:
 			return None
 	

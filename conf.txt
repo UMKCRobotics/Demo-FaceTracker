@@ -1,3 +1,4 @@
-ard_port = /dev/ttyACM0
+ard_port = /dev/ttyACM1
 ard_baud = 115200
-CAMERA_INDEX = 1
+CAMERA_INDEX = 2
+MAX_TRIES = 2

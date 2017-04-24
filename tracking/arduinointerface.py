@@ -13,8 +13,8 @@ from comm.serialcomm import SerialComm
 
 class ArduinoInterface(object):
 
-	def __init__(self, port, baud):
-		self.ard_comm = SerialComm(serial.Serial(port,int(baud)))
+	def __init__(self, port, baud, MAX_TRIES):
+		self.ard_comm = SerialComm(serial.Serial(port,int(baud)),maxTries=int(MAX_TRIES))
 		self.ard_comm.daemon = True
 		self.ard_comm.start()
 
@@ -30,7 +30,6 @@ class ArduinoInterface(object):
 				requestCommand += '|'
 			# remove last separator
 			requestCommand = requestCommand[:-1]
-			print requestCommand
 			return self.ard_comm.request(requestCommand)
 	
 	def stop(self):

@@ -82,6 +82,8 @@ void loop() {
       values[i] = "";
     }
   }
+  // delay a bit
+  delay(delayTime);
   
 }
 
@@ -96,8 +98,8 @@ String interpretCommand() {
     // if valid, do servo movements
     else {
       responseString = "1";
-      incrementServo1(getServoChange(values[0][0],values[0][1]));
-      incrementServo2(getServoChange(values[1][0],values[1][1]));
+      responseString += incrementServo1(getServoChange(values[0][0],values[0][1]));
+      responseString += incrementServo2(getServoChange(values[1][0],values[1][1]));
     }
   }
   
@@ -106,8 +108,7 @@ String interpretCommand() {
 }
 
 
-int getServoChange(char action, char amount)
-{
+int getServoChange(char action, char amount) {
   int change;
   if (action == 'n') {
     change = 0;
@@ -124,18 +125,18 @@ int getServoChange(char action, char amount)
   return change;
 }
 
-void incrementServo1(int change)
-{
+int incrementServo1(int change) {
   int conmin = 10;
   int conmax = 180;
   position1 = constrain(position1+change,conmin,conmax);
   servo1.write(position1);
+  return position1;
 }
 
-void incrementServo2(int change)
-{
+int incrementServo2(int change) {
   int conmin = 0;
   int conmax = 170;
   position2 = constrain(position2+change,conmin,conmax);
   servo2.write(position2);
+  return position2;
 }
