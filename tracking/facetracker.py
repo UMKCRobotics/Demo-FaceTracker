@@ -1,19 +1,36 @@
-import cv2
 import math
 import os
 import copy
+import cv2
+import threading
 
 __location__ = os.path.realpath(
 	os.path.join(os.getcwd(), os.path.dirname(__file__)))  # directory from which this script is ran
 
 
-class FaceTracker(object):
+class FaceTracker(threading.Thread):
 
-	def __init__(self,camera_index):
-		#self.conf = conf
-		self.cap = cv2.VideoCapture(int(camera_index))
+	def __init__(self,conf,camera_object):
+		self.conf = conf
+		self.millidelay = int(self.conf["FRAME_MILLIDELAY"])
+		threading.Thread.__init__(self)
+		self.daemon = True
+		self.cap = camera_object
 		self.face_cascade = cv2.CascadeClassifier(os.path.join(__location__,'resources/haarcascade_frontalface_default.xml'))
 		self.no_movement_command = ['n0','n0']
+		self.keep_running = True
+		self.command_holder = None
+
+	def run(self):
+		while self.keep_running:
+			self.command_holder = self.getFaceCommand()
+			# use cv2 wait in order to display window
+			key = cv2.waitKey(self.millidelay) & 0xFF
+			if (key == ord("q")):
+				self.stop()
+
+	def getLatestCommand(self):
+		return self.command_holder
 
 	def getFaceCommand(self):
 		# what to return
@@ -67,8 +84,6 @@ class FaceTracker(object):
 		else:
 			#print 'frame could not be grabbed'
 			pass
-		# use cv2 wait in order to display window
-		key = cv2.waitKey(1) & 0xFF
 		
 		return command
 
@@ -87,5 +102,6 @@ class FaceTracker(object):
 
 	def stop(self):
 		# When everything is done, release the capture
+		self.keep_running = False
 		self.cap.release()
 		cv2.destroyAllWindows()

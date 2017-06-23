@@ -1,4 +1,7 @@
 ard_port = /dev/ttyACM1
 ard_baud = 115200
-CAMERA_INDEX = 2
+CAMERA_INDEX = 0
 MAX_TRIES = 2
+FRAME_MILLIDELAY = 20
+DEBUG = 1
+
