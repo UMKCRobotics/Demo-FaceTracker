@@ -7,7 +7,7 @@ main_dir = os.path.realpath(os.path.join(__location__,'../..'))
 sys.path.insert(0, main_dir)
 
 from util import TrackingException
-from arduinointerface import ArduinoInterface
+from arduinointerface import ArduinoInterface,ArduinoMockInterface
 from facetracker import FaceTracker
 
 
@@ -18,6 +18,8 @@ class TrackingInterface(object):
 		self.conf = conf
 		if not self.conf["DEBUG"]:
 			self.movement = ArduinoInterface(conf["ard_port"],conf["ard_baud"],conf["MAX_TRIES"])
+		else:
+			self.movement = ArduinoMockInterface()
 		self.faceTracker = FaceTracker(conf, camera_object)
 		self.faceTracker.start()
 		self.previous_command = None
@@ -26,14 +28,11 @@ class TrackingInterface(object):
 	def trackFace(self):
 		new_command = self.faceTracker.getLatestCommand()
 		if new_command is not None and not (new_command == self.no_movement and self.previous_command == self.no_movement):
-			self.previous_command = new_command
-			if not self.conf["DEBUG"]: 
-				return self.movement.doCommand("m",new_command)
-			return "debug"
+			self.previous_command = new_command 
+			return self.movement.doCommand("m",new_command)
 		else:
 			return None
 	
 	def stop(self):
-		if not self.conf["DEBUG"]:
-			self.movement.stop()
+		self.movement.stop()
 		self.faceTracker.stop()
