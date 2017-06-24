@@ -20,6 +20,7 @@ class FaceTracker(threading.Thread):
 		self.no_movement_command = ['n0','n0']
 		self.keep_running = True
 		self.command_holder = None
+		self.readyToRead = False
 
 	def run(self):
 		while self.keep_running:
@@ -29,7 +30,11 @@ class FaceTracker(threading.Thread):
 			if (key == ord("q")):
 				self.stop()
 
+	def checkIfReady(self):
+		return self.readyToRead
+
 	def getLatestCommand(self):
+		self.readyToRead = False
 		return self.command_holder
 
 	def getFaceCommand(self):
@@ -81,6 +86,7 @@ class FaceTracker(threading.Thread):
 				command = ['n0','n0']
 
 			cv2.imshow('frame',frame)
+			self.readyToRead = True
 		else:
 			#print 'frame could not be grabbed'
 			pass

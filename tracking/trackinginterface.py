@@ -26,10 +26,13 @@ class TrackingInterface(object):
 		self.no_movement = self.faceTracker.getNoMovementCommand()
 
 	def trackFace(self):
-		new_command = self.faceTracker.getLatestCommand()
-		if new_command is not None and not (new_command == self.no_movement and self.previous_command == self.no_movement):
-			self.previous_command = new_command 
-			return self.movement.doCommand("m",new_command)
+		if self.faceTracker.checkIfReady():
+			new_command = self.faceTracker.getLatestCommand()
+			if new_command is not None and not (new_command == self.no_movement and self.previous_command == self.no_movement):
+				self.previous_command = new_command 
+				return self.movement.doCommand("m",new_command)
+			else:
+				return None
 		else:
 			return None
 	
